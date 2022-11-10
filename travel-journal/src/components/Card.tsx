@@ -9,6 +9,8 @@ const Card = ({ data }: any) => {
     description,
   } = data;
 
+  
+
   return (
     <div className="Card">
       <img className="card--photo" src={imageUrl} alt="" />
