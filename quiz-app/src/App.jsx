@@ -60,6 +60,8 @@ function App() {
   useEffect(() => {
     if (!!trivias) {
       setIsFetched(true);
+      updateCorrectAnswers();
+      console.log({ correctAnswers });
     }
   }, [trivias]);
 
