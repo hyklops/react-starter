@@ -5,9 +5,18 @@ import React from "react";
 // eğer button clicklenmişse ve resulta basılmışsa doğru butonları yeşil yap. eğer isClicked ile doğru seçenek farklı ise isClicked kırmızı olsun
 
 const Trivia = (props) => {
-  const { question, answers, answersArr, selectAnswer, isSelected } = props;
+  const {
+    question,
+    selectedIndex,
+    answers,
+    answersArr,
+    selectAnswer,
+    isSelected,
+    questionIndex,
+  } = props;
 
   const renderAnswers = () => {
+    console.log({ answers });
     return answers.map((item, answerIndex) => {
       const styles = { backgroundColor: item.isSelected && "#59E391" };
 
@@ -15,8 +24,10 @@ const Trivia = (props) => {
         <button
           value={item.value}
           style={styles}
-          onClick={(e) => selectAnswer(e.target)}
-          key={nanoid()}
+          onClick={(e) =>
+            selectAnswer(e.target.value, questionIndex, answerIndex)
+          }
+          key={Date.now()}
           className={`answer--${answerIndex + 1} answer ${"placeholder"}`}
         >
           <div

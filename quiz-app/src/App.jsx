@@ -54,26 +54,37 @@ function App() {
     return newAnswers;
   };
 
-  const selectAnswer = (event) => {
-    setAnswersArr((prev) => {
-      return prev.map((prevPrev, prevIndex) => {
-        return prevPrev.map((answer, index) => {
-          if (answer.isSelected) return { ...answer, isSelected: false };
-          return answer.value === event.value
-            ? { ...answer, isSelected: !answer.isSelected }
-            : answer;
-        });
-      });
+  // const selectAnswer = (event) => {
+  //   setAnswersArr((prev) => {
+  //     return prev.map((prevPrev, prevIndex) => {
+  //       return prevPrev.map((answer, index) => {
+  //         return answer.value === event.value
+  //           ? { value: answer.value, isSelected: !answer.isSelected }
+  //           : answer;
+  //       });
+  //     });
+  //   });
+  // };
+
+  const selectAnswer = (value, questionIndex, answerIndex) => {
+    let answers = answersArr;
+    answers[questionIndex].map((item, index) => {
+      if (index === answerIndex) {
+        answers[questionIndex][answerIndex] = { ...item, isSelected: true };
+      }
     });
+    console.log({ value, answers });
+    setAnswersArr(answers);
   };
 
   const getTrivias = () => {
     return trivias.map((trivia, index) => {
       return (
         <Trivia
+          key={Date.now()}
           question={trivia.question}
           answers={answersArr[index]}
-          key={nanoid()}
+          questionIndex={index}
           answersArr={answersArr}
           selectAnswer={selectAnswer}
         />
@@ -84,6 +95,10 @@ function App() {
   useEffect(() => {
     dataFetch();
   }, []);
+
+  useEffect(() => {
+    console.log({ answersArr });
+  }, [answersArr]);
 
   useEffect(() => {
     if (trivias) {
