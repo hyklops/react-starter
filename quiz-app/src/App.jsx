@@ -54,12 +54,12 @@ function App() {
     return newAnswers;
   };
 
-  const selectAnswer = (item) => {
+  const selectAnswer = (event) => {
     setAnswersArr((prev) => {
-      return prev.map((prevPrev, index) => {
+      return prev.map((prevPrev, prevIndex) => {
         return prevPrev.map((answer, index) => {
           if (answer.isSelected) return { ...answer, isSelected: false };
-          return answer.value === item.value
+          return answer.value === event.value
             ? { ...answer, isSelected: !answer.isSelected }
             : answer;
         });
