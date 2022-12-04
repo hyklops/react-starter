@@ -58,6 +58,10 @@ button {
   touch-action: manipulation;
 }
 
+.answerButtons {
+  pointer-events: none;
+}
+
 button:hover {
   background-color: #1e293b;
   color: #fff;

@@ -8,9 +8,10 @@ export default function Die(props) {
     <div
       className="die-face"
       style={styles}
-      onClick={() => {
+      onClick={(e) => {
         props.holdDice();
         props.runner();
+       
       }}
     >
       <h2 className="die-num">{props.value}</h2>

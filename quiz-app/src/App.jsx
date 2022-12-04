@@ -7,6 +7,9 @@ function App() {
   const [trivias, setTrivias] = useState(null);
   const [isFetched, setIsFetched] = useState(false);
   const [correctAnswers, setCorrectAnswers] = useState([]);
+  const [answersArr, setAnswersArr] = useState([]);
+
+  console.log({ answersArr });
 
   async function dataFetch() {
     const res = await fetch(
@@ -16,13 +19,7 @@ function App() {
     return setTrivias(data.results);
   }
 
-  const shuffle = (trivia) => {
-    const answers = [...trivia.incorrect_answers, trivia.correct_answer];
-    const shuffledAnswers = getRandomAnswers(answers);
-
-    // const shuffleArray = (answer) => [...array].sort(() => Math.random() - 0.5);
-    return shuffledAnswers;
-  };
+  /* function is duplicating because of logic. Need to Fix.
 
   const getRandomAnswers = (answers) => {
     const newAnswers = [];
@@ -30,25 +27,55 @@ function App() {
     while (newAnswers.length !== 4) {
       const getRandomIndex = Math.floor(Math.random() * 4);
 
-      const condition = newAnswers.some(
-        (item) => item === answers[getRandomIndex]
-      );
-
-      if (!condition) {
-        newAnswers.push(answers[getRandomIndex]);
-      }
+      const condition = newAnswers.some((item) => {
+        item === answers[getRandomIndex].value ||
+          item.value === answers[getRandomIndex].value;
+      });
+      console.log({ condition });
+      !condition &&
+        newAnswers.push({ value: answers[getRandomIndex], isSelected: false });
     }
+
+    console.log(newAnswers);
+    return newAnswers;
+  };
+  */
+
+  const shuffle = (trivia) => {
+    const newAnswers = [];
+    const answers = [...trivia.incorrect_answers, trivia.correct_answer];
+    const shuffleArray = (answers) =>
+      [...answers].sort(() => Math.random() - 0.5);
+    const shuffledAnswers = shuffleArray(answers);
+    shuffledAnswers.map((answer) =>
+      newAnswers.push({ value: answer, isSelected: false })
+    );
 
     return newAnswers;
   };
 
+  const selectAnswer = (item) => {
+    setAnswersArr((prev) => {
+      return prev.map((prevPrev, index) => {
+        return prevPrev.map((answer, index) => {
+          if (answer.isSelected) return { ...answer, isSelected: false };
+          return answer.value === item.value
+            ? { ...answer, isSelected: !answer.isSelected }
+            : answer;
+        });
+      });
+    });
+  };
+
   const getTrivias = () => {
-    return trivias.map((trivia) => {
+    return trivias.map((trivia, index) => {
       return (
         <Trivia
           question={trivia.question}
-          answers={shuffle(trivia)}
+          answers={answersArr[index]}
           key={nanoid()}
+          answersArr={answersArr}
+          selectAnswer={selectAnswer}
         />
       );
     });
@@ -60,9 +87,18 @@ function App() {
 
   useEffect(() => {
     if (trivias) {
+      trivias.map((trivia) => {
+        const newAnswers = shuffle(trivia);
+        setAnswersArr((prev) => [...prev, newAnswers]);
+      });
+    }
+  }, [trivias]);
+
+  useEffect(() => {
+    if (trivias) {
       setIsFetched(true);
       const updateCorrectAnswers = () => {
-        trivias.map((trivia) => {
+        return trivias.map((trivia) => {
           if (correctAnswers.some((item) => item === trivia.correct_answer));
           else setCorrectAnswers((prev) => [...prev, trivia.correct_answer]);
         });
