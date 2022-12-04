@@ -1,15 +1,13 @@
+import { nanoid } from "nanoid";
 import React, { useState, useEffect } from "react";
 import Trivia from "./assets/components/Trivia";
 import "./index.css";
-import { nanoid } from "nanoid";
 
 function App() {
   const [trivias, setTrivias] = useState(null);
   const [isFetched, setIsFetched] = useState(false);
   const [correctAnswers, setCorrectAnswers] = useState([]);
   const [answersArr, setAnswersArr] = useState([]);
-
-  console.log({ answersArr });
 
   async function dataFetch() {
     const res = await fetch(
@@ -18,28 +16,6 @@ function App() {
     const data = await res.json();
     return setTrivias(data.results);
   }
-
-  /* function is duplicating because of logic. Need to Fix.
-
-  const getRandomAnswers = (answers) => {
-    const newAnswers = [];
-
-    while (newAnswers.length !== 4) {
-      const getRandomIndex = Math.floor(Math.random() * 4);
-
-      const condition = newAnswers.some((item) => {
-        item === answers[getRandomIndex].value ||
-          item.value === answers[getRandomIndex].value;
-      });
-      console.log({ condition });
-      !condition &&
-        newAnswers.push({ value: answers[getRandomIndex], isSelected: false });
-    }
-
-    console.log(newAnswers);
-    return newAnswers;
-  };
-  */
 
   const shuffle = (trivia) => {
     const newAnswers = [];
@@ -54,38 +30,34 @@ function App() {
     return newAnswers;
   };
 
-  // const selectAnswer = (event) => {
-  //   setAnswersArr((prev) => {
-  //     return prev.map((prevPrev, prevIndex) => {
-  //       return prevPrev.map((answer, index) => {
-  //         return answer.value === event.value
-  //           ? { value: answer.value, isSelected: !answer.isSelected }
-  //           : answer;
-  //       });
-  //     });
-  //   });
-  // };
+  const selectAnswer = (questionIndex, answerIndex) => {
+    setAnswersArr((prevState) => {
+      const returnValue = prevState[questionIndex].map((item, idx) => {
+        if (idx === answerIndex) {
+          return { ...item, isSelected: true };
+        }
+        return { ...item, isSelected: false };
+      });
 
-  const selectAnswer = (value, questionIndex, answerIndex) => {
-    let answers = answersArr;
-    answers[questionIndex].map((item, index) => {
-      if (index === answerIndex) {
-        answers[questionIndex][answerIndex] = { ...item, isSelected: true };
-      }
+      const returnArr = [
+        ...prevState.slice(0, questionIndex),
+        returnValue,
+        ...prevState.slice(questionIndex + 1),
+      ];
+
+      return returnArr;
     });
-    console.log({ value, answers });
-    setAnswersArr(answers);
   };
 
   const getTrivias = () => {
     return trivias.map((trivia, index) => {
+      console.log("hellooo");
       return (
         <Trivia
-          key={Date.now()}
+          key={nanoid()}
           question={trivia.question}
           answers={answersArr[index]}
           questionIndex={index}
-          answersArr={answersArr}
           selectAnswer={selectAnswer}
         />
       );
@@ -95,10 +67,6 @@ function App() {
   useEffect(() => {
     dataFetch();
   }, []);
-
-  useEffect(() => {
-    console.log({ answersArr });
-  }, [answersArr]);
 
   useEffect(() => {
     if (trivias) {
@@ -119,7 +87,6 @@ function App() {
         });
       };
       updateCorrectAnswers();
-      console.log({ correctAnswers });
     }
   }, [trivias, correctAnswers]);
 
