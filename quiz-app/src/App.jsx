@@ -8,6 +8,7 @@ function App() {
   const [isFetched, setIsFetched] = useState(false);
   const [correctAnswers, setCorrectAnswers] = useState([]);
   const [answersArr, setAnswersArr] = useState([]);
+  const [check, setCheck] = useState(false);
 
   async function dataFetch() {
     const res = await fetch(
@@ -31,27 +32,27 @@ function App() {
   };
 
   const selectAnswer = (questionIndex, answerIndex) => {
-    setAnswersArr((prevState) => {
-      const returnValue = prevState[questionIndex].map((item, idx) => {
-        if (idx === answerIndex) {
-          return { ...item, isSelected: true };
-        }
-        return { ...item, isSelected: false };
+    if (!check)
+      setAnswersArr((prevState) => {
+        const returnValue = prevState[questionIndex].map((item, idx) => {
+          if (idx === answerIndex) {
+            return { ...item, isSelected: true };
+          }
+          return { ...item, isSelected: false };
+        });
+
+        const returnArr = [
+          ...prevState.slice(0, questionIndex),
+          returnValue,
+          ...prevState.slice(questionIndex + 1),
+        ];
+
+        return returnArr;
       });
-
-      const returnArr = [
-        ...prevState.slice(0, questionIndex),
-        returnValue,
-        ...prevState.slice(questionIndex + 1),
-      ];
-
-      return returnArr;
-    });
   };
 
   const getTrivias = () => {
     return trivias.map((trivia, index) => {
-      console.log("hellooo");
       return (
         <Trivia
           key={nanoid()}
@@ -59,11 +60,14 @@ function App() {
           answers={answersArr[index]}
           questionIndex={index}
           selectAnswer={selectAnswer}
+          check={check}
+          correctAnswers={correctAnswers}
         />
       );
     });
   };
 
+  const checker = () => {};
   useEffect(() => {
     dataFetch();
   }, []);
@@ -96,9 +100,16 @@ function App() {
 
   return (
     <div className="App">
+      <div className="blob"></div>
       <div>{getTrivias()}</div>
       <div className="check">
-        <button>Check Answers</button>
+        <button
+          onClick={() => {
+            setCheck(true);
+          }}
+        >
+          Check Answers
+        </button>
       </div>
     </div>
   );

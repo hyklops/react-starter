@@ -2,23 +2,35 @@ html {
   font-size: 62.5%;
 } /* =10px */
 body {
-  font-size: 2rem;
+  font-size: 2.2rem;
+  font-family: "Karla", sans-serif;
+  font-weight: 600;
 } /* =14px */
-h1 {
-  font-size: 2.4rem;
-} /* =24px */
 
 .App {
   margin: auto;
   width: 70%;
-  min-width: 500px;
-  border: 3px solid green;
+  min-width: 400px;
+  max-width: 750px;
+  border: 2px solid #29326486;
   padding: 10px;
+  border-radius: 10px;
+}
+
+.trivias {
+  padding: 30px;
+  border-bottom: #2932642a solid 1px;
+}
+
+.question {
+  margin-bottom: 20px;
+  color: #293264;
 }
 
 .answers {
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
+  color: #293264;
 }
 
 .check {
@@ -34,6 +46,7 @@ h1 {
 }
 
 button {
+  min-width: 10rem;
   background-color: #fff;
   border: 0 solid #e2e8f0;
   border-radius: 1.5rem;
@@ -44,25 +57,37 @@ button {
   font-family: "Basier circle", -apple-system, system-ui, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
     "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 1.6rem;
+  font-weight: 400;
   line-height: 1;
   padding: 1rem 1.6rem;
   text-align: center;
   text-decoration: none #0d172a solid;
   text-decoration-thickness: auto;
   transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid black;
+  border: 1px solid #4d5b9e;
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
+  font-family: "Karla", sans-serif;
 }
 
 .answerButtons {
   pointer-events: none;
 }
 
-button:hover {
+.blob {
+}
+
+.answer:hover {
   background-color: #1e293b;
-  color: #fff;
+  color: white;
+}
+
+@media only screen and (max-width: 768px) {
+  .App {
+    width: 100%;
+    padding-right: 0px;
+    padding-left: 0px;
+  }
 }

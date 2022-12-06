@@ -3,20 +3,37 @@ import React from "react";
 import { nanoid } from "nanoid";
 
 const Trivia = (props) => {
-  const { question, answers, selectAnswer, questionIndex } = props;
+  const {
+    question,
+    answers,
+    selectAnswer,
+    questionIndex,
+    check,
+    correctAnswers,
+  } = props;
   const renderAnswers = () => {
     return answers.map?.((item, answerIndex) => {
-      const styles = {
-        backgroundColor: item.isSelected ? "#59E391" : null,
-      };
+      const isCorrect = correctAnswers.includes(item.value);
 
       return (
         <button
           value={item.value}
-          style={styles}
+          style={
+            !check
+              ? item.isSelected
+                ? { backgroundColor: "#D6DBF5" }
+                : null
+              : item.isSelected
+              ? isCorrect
+                ? { backgroundColor: "#59E391" }
+                : { backgroundColor: "#F8BCBC" }
+              : isCorrect
+              ? { backgroundColor: "#59E391" }
+              : { backgroundColor: null, color: "grey", borderColor: "grey" }
+          }
           onClick={() => selectAnswer(questionIndex, answerIndex)}
           key={nanoid()}
-          className={`answer--${answerIndex + 1} answer ${"placeholder"}`}
+          className={`answer--${answerIndex + 1} answer`}
         >
           <div
             className="answerButtons"
