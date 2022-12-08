@@ -76,9 +76,6 @@ button {
   pointer-events: none;
 }
 
-.blob {
-}
-
 .answer:hover {
   background-color: #1e293b;
   color: white;
@@ -90,4 +87,17 @@ button {
     padding-right: 0px;
     padding-left: 0px;
   }
+}
+
+.start-section {
+  width: 100%;
+  text-align: center;
+  vertical-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+select {
+  margin-bottom: 20px;
 }

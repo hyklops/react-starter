@@ -1,6 +1,7 @@
 import { nanoid } from "nanoid";
 import React, { useState, useEffect } from "react";
 import Trivia from "./assets/components/Trivia";
+import Start from "./assets/components/Start";
 import "./index.css";
 
 function App() {
@@ -10,9 +11,37 @@ function App() {
   const [answersArr, setAnswersArr] = useState([]);
   const [check, setCheck] = useState(false);
 
+  const [start, setStart] = React.useState(true);
+
+  const [category, setCategory] = React.useState({
+    categoryId: "",
+  });
+  const selectedCategoryId = category.categoryId;
+
+  function handleChange(event) {
+    const { value } = event.target;
+
+    setCategory((prev) => {
+      return {
+        ...prev,
+        categoryId: value,
+      };
+    });
+    console.log(category);
+  }
+
+  function handleSubmit(event) {
+    event.preventDefault();
+  }
+
+  function startQuiz() {
+    setStart(false);
+  }
+
+  console.log({ answersArr });
   async function dataFetch() {
     const res = await fetch(
-      "https://opentdb.com/api.php?amount=5&type=multiple"
+      `https://opentdb.com/api.php?amount=5&category=${selectedCategoryId}&type=multiple`
     );
     const data = await res.json();
     return setTrivias(data.results);
@@ -61,16 +90,16 @@ function App() {
           questionIndex={index}
           selectAnswer={selectAnswer}
           check={check}
+          setCheck={setCheck}
           correctAnswers={correctAnswers}
         />
       );
     });
   };
 
-  const checker = () => {};
   useEffect(() => {
     dataFetch();
-  }, []);
+  }, [selectedCategoryId]);
 
   useEffect(() => {
     if (trivias) {
@@ -80,6 +109,16 @@ function App() {
       });
     }
   }, [trivias]);
+
+  useEffect(() => {
+    if (answersArr.length > 5) {
+      setAnswersArr((prevState) => {
+        const splicedArray = prevState;
+        splicedArray.splice(0, 5);
+        return setAnswersArr(splicedArray);
+      });
+    }
+  }, [answersArr]);
 
   useEffect(() => {
     if (trivias) {
@@ -100,17 +139,28 @@ function App() {
 
   return (
     <div className="App">
-      <div className="blob"></div>
-      <div>{getTrivias()}</div>
-      <div className="check">
-        <button
-          onClick={() => {
-            setCheck(true);
-          }}
-        >
-          Check Answers
-        </button>
+      <div>
+        {start ? (
+          <Start
+            startQuiz={startQuiz}
+            handleChange={handleChange}
+            handleSubmit={handleSubmit}
+          />
+        ) : (
+          getTrivias()
+        )}
       </div>
+      {!start ? (
+        <div className="check">
+          <button
+            onClick={() => {
+              setCheck(true);
+            }}
+          >
+            Check Answers
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 }
