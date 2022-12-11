@@ -1,32 +1,34 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import "./App.css";
 import axios from "axios";
 import { nanoid } from "nanoid";
 import SearchBar from "./components/SearchBar";
+import SearchResults from "./components/SearchResults";
 
 function App() {
   const [movieResults, setMovieResults] = useState();
   const [isFetched, setIsFetched] = useState(false);
+  const [searchKey, setSearchKey] = useState();
   const api_url = "http://www.omdbapi.com/?";
   const api_key = "&apikey=36def5b4";
 
-  const fetchMovies = async (movieName) => {
-    const data = await axios.get(`${api_url}s=${movieName}${api_key}`);
-    return setMovieResults(data.data.Search);
-  };
-
-  const renderPoster = () => {
-    if (isFetched === true) {
-      return movieResults?.map((result) => {
-        return <img src={`${result.Poster}`} key={nanoid()} />;
-      });
+  const fetchMovies = async (event) => {
+    if (event) {
+      event.preventDefault();
+    }
+    if (searchKey && searchKey !== "") {
+      const data = await axios.get(`${api_url}s=${searchKey}${api_key}`);
+      return setMovieResults(data.data.Search);
     }
   };
 
-  useEffect(() => {
-    fetchMovies("space");
-  }, []);
+  const renderResults = () => {
+    if (isFetched === true) {
+      return movieResults?.map((result) => {
+        return <SearchResults key={nanoid()} result={result} />;
+      });
+    }
+  };
 
   useEffect(() => {
     if (movieResults) setIsFetched(true);
@@ -37,13 +39,15 @@ function App() {
     console.log({ movieResults });
   }, [isFetched]);
 
-  return isFetched ? (
+  return (
     <div className="App">
-      <SearchBar />
-      <div className="posters">{renderPoster()}</div>
+      <SearchBar
+        searchKey={searchKey}
+        setSearchKey={setSearchKey}
+        fetchMovies={fetchMovies}
+        renderResults={renderResults}
+      />
     </div>
-  ) : (
-    <h1>loading </h1>
   );
 }
 
