@@ -12,6 +12,7 @@ export default function SearchBar(props) {
     renderResults,
     setMovieResults,
     selectMovie,
+    selectedMovies,
   } = props;
   console.log({ searchKey });
   const [modalShown, toggleModal] = React.useState(false);
@@ -19,19 +20,25 @@ export default function SearchBar(props) {
     toggleModal(false), setSearchKey(false), setMovieResults();
   };
   return (
-    <>
+    <div className="SearchBar">
       <button
         onClick={() => {
           toggleModal(!modalShown);
         }}
       >
-        Search Movie
+        {selectedMovies.length === 0 ? "BRAWL NOW!" : "Search Another Movie"}
       </button>
       <Modal shown={modalShown} close={() => close()}>
         <div className="searchContainer">
           <div className="searchContainer--flex">
             <p>Search Movies</p>
-            <button onClick={close}>Close</button>
+            <button
+              onClick={() => {
+                close();
+              }}
+            >
+              Close
+            </button>
           </div>
           <p>Name of the Film</p>
           <form onSubmit={fetchMovies} className="searchBar">
@@ -41,15 +48,12 @@ export default function SearchBar(props) {
               name="search"
               onInput={(event) => setSearchKey(event.target.value)}
             />
-            <button className="submit-search" type="submit">
-              <i className="fa fa-search"></i>
-            </button>
           </form>
           <ul onClick={() => close()} className="resultsList">
             {renderResults()}
           </ul>
         </div>
       </Modal>
-    </>
+    </div>
   );
 }

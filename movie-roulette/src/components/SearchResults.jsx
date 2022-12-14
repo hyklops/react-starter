@@ -1,15 +1,11 @@
 import React from "react";
-import { useState, useEffect } from "react";
-import axios from "axios";
-import { nanoid } from "nanoid";
 
 export default function SearchResults(props) {
-  const { result, selectMovie, close } = props;
+  const { result, selectMovie } = props;
   return (
     <li
       onClick={() => {
         selectMovie(result);
-        close();
       }}
       className="SearchResults"
     >

@@ -4,7 +4,6 @@ import axios from "axios";
 import { nanoid } from "nanoid";
 import SearchBar from "./components/SearchBar";
 import SearchResults from "./components/SearchResults";
-import SelectedMovies from "./components/SelectedMovies";
 
 function App() {
   const [movieResults, setMovieResults] = useState();
@@ -13,6 +12,7 @@ function App() {
   const api_url = "http://www.omdbapi.com/?";
   const api_key = "&apikey=36def5b4";
   const [selectedMovies, setSelectedMovies] = useState([]);
+  const [isClicked, setIsClicked] = useState(false);
 
   const fetchMovies = async (event) => {
     if (event) {
@@ -32,7 +32,6 @@ function App() {
             key={nanoid()}
             result={result}
             selectMovie={selectMovie}
-            close={close}
           />
         );
       });
@@ -48,11 +47,10 @@ function App() {
   const renderSelecteds = () => {
     return selectedMovies.map((arr) => {
       return (
-        <div key={nanoid()}>
+        <div className="selectedMovie" key={nanoid()}>
           {
-            <div>
+            <div className="selectedMovie">
               <img className="poster" src={arr.Poster} />
-              <p className="movie-title">{arr.Title}</p>
             </div>
           }
         </div>
@@ -60,10 +58,34 @@ function App() {
     });
   };
 
+  const [randomNumber, setRandomNumber] = useState();
+
+  const randomMovie = () => {
+    return (
+      setRandomNumber(Math.floor(Math.random() * selectedMovies.length)),
+      setIsClicked(true)
+    );
+  };
+
   useEffect(() => {
     if (movieResults) setIsFetched(true);
     if (!movieResults) setIsFetched(false);
   }, [movieResults]);
+
+  useEffect(() => {
+    setSelectedMovies((prevState) => {
+      return prevState.map((movie, index) => {
+        if (index === randomNumber && !movie.count) {
+          return { ...movie, Count: 1 };
+        }
+        if (index === randomNumber) {
+          return { ...movie, Count: movie.count++ };
+        } else {
+          return movie;
+        }
+      });
+    });
+  }, [randomNumber]);
 
   useEffect(() => {
     console.log({ movieResults });
@@ -75,15 +97,42 @@ function App() {
 
   return (
     <div className="App">
-      <SearchBar
-        searchKey={searchKey}
-        setSearchKey={setSearchKey}
-        fetchMovies={fetchMovies}
-        renderResults={renderResults}
-        setMovieResults={setMovieResults}
-        selectMovie={selectMovie}
-      />
-      <div className="selectedMovies">{renderSelecteds()}</div>
+      <div className="container">
+        <h1>MOVIE BRAWL</h1>
+        <p>
+          You have decided to watch a movie with your friends but can't agree on
+          which movie to watch?
+        </p>
+
+        <SearchBar
+          searchKey={searchKey}
+          setSearchKey={setSearchKey}
+          fetchMovies={fetchMovies}
+          renderResults={renderResults}
+          setMovieResults={setMovieResults}
+          selectMovie={selectMovie}
+          selectedMovies={selectedMovies}
+        />
+        <div className="selectedMovies">{renderSelecteds()}</div>
+        {selectedMovies.length === 0 ? (
+          ""
+        ) : (
+          <button className="green" onClick={() => randomMovie()}>
+            Select Random
+          </button>
+        )}
+        <div>
+          {isClicked && (
+            <div className="selectedMovie">
+              <img
+                className="poster"
+                src={selectedMovies[randomNumber].Poster}
+              />
+              <h2>{selectedMovies[randomNumber].Count}</h2>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
