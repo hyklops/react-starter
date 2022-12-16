@@ -13,6 +13,7 @@ function App() {
   const api_key = "&apikey=36def5b4";
   const [selectedMovies, setSelectedMovies] = useState([]);
   const [isClicked, setIsClicked] = useState(false);
+  const [change, setChange] = useState(0);
 
   const fetchMovies = async (event) => {
     if (event) {
@@ -47,9 +48,10 @@ function App() {
   const renderSelecteds = () => {
     return selectedMovies.map((arr) => {
       return (
-        <div className="selectedMovie" key={nanoid()}>
+        <div className="selectedMovieContainer" key={nanoid()}>
           {
             <div className="selectedMovie">
+              <div className="count">{arr.Count && arr.Count}</div>
               <img className="poster" src={arr.Poster} />
             </div>
           }
@@ -63,7 +65,8 @@ function App() {
   const randomMovie = () => {
     return (
       setRandomNumber(Math.floor(Math.random() * selectedMovies.length)),
-      setIsClicked(true)
+      setIsClicked(true),
+      setChange((prev) => prev + 1)
     );
   };
 
@@ -75,17 +78,17 @@ function App() {
   useEffect(() => {
     setSelectedMovies((prevState) => {
       return prevState.map((movie, index) => {
-        if (index === randomNumber && !movie.count) {
+        if (index === randomNumber && !movie.Count) {
           return { ...movie, Count: 1 };
         }
-        if (index === randomNumber) {
-          return { ...movie, Count: movie.count++ };
+        if (index === randomNumber && movie.Count) {
+          return { ...movie, Count: movie.Count + 1 };
         } else {
           return movie;
         }
       });
     });
-  }, [randomNumber]);
+  }, [change]);
 
   useEffect(() => {
     console.log({ movieResults });
@@ -128,7 +131,6 @@ function App() {
                 className="poster"
                 src={selectedMovies[randomNumber].Poster}
               />
-              <h2>{selectedMovies[randomNumber].Count}</h2>
             </div>
           )}
         </div>
