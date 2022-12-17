@@ -10,7 +10,7 @@ function App() {
   const [isFetched, setIsFetched] = useState(false);
   const [searchKey, setSearchKey] = useState();
   const api_url = "http://www.omdbapi.com/?";
-  const api_key = "&apikey=36def5b4";
+  const api_key = `&apikey=${import.meta.env.VITE_API_KEY}`;
   const [selectedMovies, setSelectedMovies] = useState([]);
   const [isClicked, setIsClicked] = useState(false);
   const [change, setChange] = useState(0);
